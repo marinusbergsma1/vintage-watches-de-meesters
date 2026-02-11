@@ -546,10 +546,14 @@
       <div class="section-divider" style="margin: 0 auto 32px;"></div>
       <form id="loginForm">
         <div class="form-group">
+          <label for="loginEmail">E-mailadres</label>
+          <input type="email" id="loginEmail" placeholder="admin@vintagewatchesdemeesters.nl" autocomplete="username">
+        </div>
+        <div class="form-group">
           <label for="loginPassword">Wachtwoord</label>
           <input type="password" id="loginPassword" placeholder="Voer uw wachtwoord in" autocomplete="current-password">
         </div>
-        <div id="loginError" class="login-error">Onjuist wachtwoord. Probeer het opnieuw.</div>
+        <div id="loginError" class="login-error">Onjuist e-mailadres of wachtwoord. Probeer het opnieuw.</div>
         <button type="submit" class="btn btn-primary" style="width: 100%; text-align: center;">Inloggen</button>
       </form>
     </div>
@@ -768,6 +772,7 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="js/firebase-config.js"></script>
 
   <script>
@@ -975,26 +980,35 @@
     }
   ];
 
-  const ADMIN_PASSWORD = 'demeesters2025';
+  // ---------- Authentication (Firebase Auth) ----------
 
-  // ---------- Authentication ----------
-  function checkAuth() {
-    if (sessionStorage.getItem('dm_admin_auth') === 'true') {
+  // Listen for auth state changes
+  auth.onAuthStateChanged(function(user) {
+    if (user) {
       showAdmin();
+    } else {
+      showLogin();
     }
-  }
+  });
 
   document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    const pw = document.getElementById('loginPassword').value;
-    if (pw === ADMIN_PASSWORD) {
-      sessionStorage.setItem('dm_admin_auth', 'true');
-      showAdmin();
-    } else {
-      document.getElementById('loginError').style.display = 'block';
-      document.getElementById('loginPassword').value = '';
-      document.getElementById('loginPassword').focus();
-    }
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    // Hide previous error
+    document.getElementById('loginError').style.display = 'none';
+
+    auth.signInWithEmailAndPassword(email, password)
+      .then(function(userCredential) {
+        // Success — onAuthStateChanged will handle the UI switch
+      })
+      .catch(function(error) {
+        console.error('Login error:', error.code, error.message);
+        document.getElementById('loginError').style.display = 'block';
+        document.getElementById('loginPassword').value = '';
+        document.getElementById('loginPassword').focus();
+      });
   });
 
   function showAdmin() {
@@ -1004,11 +1018,18 @@
     loadAnalytics();
   }
 
-  function logout() {
-    sessionStorage.removeItem('dm_admin_auth');
+  function showLogin() {
     document.getElementById('adminPanel').style.display = 'none';
     document.getElementById('loginScreen').style.display = 'flex';
     document.getElementById('loginPassword').value = '';
+  }
+
+  function logout() {
+    auth.signOut().then(function() {
+      // onAuthStateChanged will handle the UI switch
+    }).catch(function(error) {
+      console.error('Logout error:', error);
+    });
   }
 
   // ---------- Tabs ----------
@@ -1262,7 +1283,7 @@
   }
 
   // ---------- Init ----------
-  checkAuth();
+  // Auth state is handled by onAuthStateChanged above
 
   </script>
 </body>

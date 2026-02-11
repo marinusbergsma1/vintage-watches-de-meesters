@@ -16,4 +16,5 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const auth = typeof firebase.auth === 'function' ? firebase.auth() : null;
 const WATCHES_COLLECTION = 'watches';
