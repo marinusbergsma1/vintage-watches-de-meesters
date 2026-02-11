@@ -107,7 +107,8 @@ function initParallax() {
 }
 
 /* ---------- Watch Data & Rendering ---------- */
-const watches = [
+// Read from localStorage if available (set by admin panel), otherwise use hardcoded defaults
+const _hardcodedWatches = [
   {
     name: "Rolex Oyster Perpetual 36 mm blue dial",
     year: 2025,
@@ -302,6 +303,18 @@ const watches = [
   }
 ];
 
+// Use localStorage data if available, otherwise fall back to hardcoded array
+const watches = (function() {
+  try {
+    const stored = localStorage.getItem('dm_watches');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch(e) { /* ignore parse errors */ }
+  return _hardcodedWatches;
+})();
+
 function renderWatches(containerId, limit) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -364,3 +377,100 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     }
   });
 });
+
+/* ============================================
+   Analytics Tracker
+   Logs page views and click events to localStorage
+   Key: "dm_analytics"
+   ============================================ */
+(function() {
+  const ANALYTICS_KEY = 'dm_analytics';
+
+  // Generate or retrieve session ID
+  function getSessionId() {
+    let sid = sessionStorage.getItem('dm_session_id');
+    if (!sid) {
+      sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      sessionStorage.setItem('dm_session_id', sid);
+    }
+    return sid;
+  }
+
+  function logEvent(eventData) {
+    try {
+      const events = JSON.parse(localStorage.getItem(ANALYTICS_KEY) || '[]');
+      events.push(eventData);
+      // Keep max 10000 events to prevent localStorage overflow
+      if (events.length > 10000) {
+        events.splice(0, events.length - 10000);
+      }
+      localStorage.setItem(ANALYTICS_KEY, JSON.stringify(events));
+    } catch(e) { /* silently fail */ }
+  }
+
+  // Get a readable label for the clicked element
+  function getClickLabel(el) {
+    // Buttons
+    if (el.closest('.btn') || el.tagName === 'BUTTON') {
+      const btn = el.closest('.btn') || el;
+      const text = btn.textContent.trim();
+      return text ? 'Button: ' + text.substring(0, 60) : 'Button';
+    }
+    // Links
+    if (el.tagName === 'A' || el.closest('a')) {
+      const link = el.closest('a') || el;
+      const text = link.textContent.trim();
+      const href = link.getAttribute('href') || '';
+      if (text) return 'Link: ' + text.substring(0, 60);
+      if (href) return 'Link: ' + href.substring(0, 60);
+      return 'Link';
+    }
+    // Watch cards
+    if (el.closest('.watch-card')) {
+      const card = el.closest('.watch-card');
+      const name = card.querySelector('.watch-card-name');
+      return 'Watch: ' + (name ? name.textContent.trim().substring(0, 60) : 'card');
+    }
+    // Nav items
+    if (el.closest('.nav-link') || el.closest('.nav-toggle')) {
+      return 'Nav: ' + (el.textContent.trim().substring(0, 40) || 'toggle');
+    }
+    // Fallback
+    const tag = el.tagName.toLowerCase();
+    const text = el.textContent.trim().substring(0, 40);
+    return tag + (text ? ': ' + text : '');
+  }
+
+  // Get page name from URL
+  function getPageName() {
+    const path = window.location.pathname;
+    const file = path.split('/').pop() || 'index.html';
+    return file || 'index.html';
+  }
+
+  const sessionId = getSessionId();
+
+  // Log page view
+  logEvent({
+    type: 'pageview',
+    page: getPageName(),
+    url: window.location.href,
+    timestamp: Date.now(),
+    sessionId: sessionId
+  });
+
+  // Log clicks on interactive elements
+  document.addEventListener('click', function(e) {
+    const el = e.target;
+    // Only track clicks on buttons, links, and watch cards
+    if (el.closest('a, button, .btn, .watch-card, .nav-link, .nav-toggle')) {
+      logEvent({
+        type: 'click',
+        target: getClickLabel(el),
+        page: getPageName(),
+        timestamp: Date.now(),
+        sessionId: sessionId
+      });
+    }
+  }, true);
+})();
