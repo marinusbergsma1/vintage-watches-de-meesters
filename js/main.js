@@ -303,17 +303,8 @@ const _hardcodedWatches = [
   }
 ];
 
-// Use localStorage data if available, otherwise fall back to hardcoded array
-const watches = (function() {
-  try {
-    const stored = localStorage.getItem('dm_watches');
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-    }
-  } catch(e) { /* ignore parse errors */ }
-  return _hardcodedWatches;
-})();
+// Use Firestore if available, otherwise fall back to hardcoded array
+let watches = _hardcodedWatches;
 
 function renderWatches(containerId, limit) {
   const container = document.getElementById(containerId);
@@ -359,12 +350,34 @@ function renderWatches(containerId, limit) {
   initScrollAnimations();
 }
 
-// Auto-render on page load
+// Auto-render: first show hardcoded data, then try Firestore
 if (document.getElementById('watch-grid')) {
   renderWatches('watch-grid');
 }
 if (document.getElementById('featured-watches')) {
   renderWatches('featured-watches', 6);
+}
+
+// Load watches from Firestore (overrides hardcoded data when available)
+if (typeof db !== 'undefined') {
+  db.collection('watches').orderBy('order', 'asc').get()
+    .then(function(snapshot) {
+      if (!snapshot.empty) {
+        watches = snapshot.docs.map(function(doc) {
+          return doc.data();
+        });
+        // Re-render with Firestore data
+        if (document.getElementById('watch-grid')) {
+          renderWatches('watch-grid');
+        }
+        if (document.getElementById('featured-watches')) {
+          renderWatches('featured-watches', 6);
+        }
+      }
+    })
+    .catch(function(err) {
+      console.log('Firestore not available, using hardcoded watches');
+    });
 }
 
 /* ---------- Smooth Scroll for anchor links ---------- */
@@ -379,98 +392,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 /* ============================================
-   Analytics Tracker
-   Logs page views and click events to localStorage
-   Key: "dm_analytics"
+   Analytics is now handled by Google Analytics 4
+   Measurement ID: G-F31KW332BS
    ============================================ */
-(function() {
-  const ANALYTICS_KEY = 'dm_analytics';
-
-  // Generate or retrieve session ID
-  function getSessionId() {
-    let sid = sessionStorage.getItem('dm_session_id');
-    if (!sid) {
-      sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-      sessionStorage.setItem('dm_session_id', sid);
-    }
-    return sid;
-  }
-
-  function logEvent(eventData) {
-    try {
-      const events = JSON.parse(localStorage.getItem(ANALYTICS_KEY) || '[]');
-      events.push(eventData);
-      // Keep max 10000 events to prevent localStorage overflow
-      if (events.length > 10000) {
-        events.splice(0, events.length - 10000);
-      }
-      localStorage.setItem(ANALYTICS_KEY, JSON.stringify(events));
-    } catch(e) { /* silently fail */ }
-  }
-
-  // Get a readable label for the clicked element
-  function getClickLabel(el) {
-    // Buttons
-    if (el.closest('.btn') || el.tagName === 'BUTTON') {
-      const btn = el.closest('.btn') || el;
-      const text = btn.textContent.trim();
-      return text ? 'Button: ' + text.substring(0, 60) : 'Button';
-    }
-    // Links
-    if (el.tagName === 'A' || el.closest('a')) {
-      const link = el.closest('a') || el;
-      const text = link.textContent.trim();
-      const href = link.getAttribute('href') || '';
-      if (text) return 'Link: ' + text.substring(0, 60);
-      if (href) return 'Link: ' + href.substring(0, 60);
-      return 'Link';
-    }
-    // Watch cards
-    if (el.closest('.watch-card')) {
-      const card = el.closest('.watch-card');
-      const name = card.querySelector('.watch-card-name');
-      return 'Watch: ' + (name ? name.textContent.trim().substring(0, 60) : 'card');
-    }
-    // Nav items
-    if (el.closest('.nav-link') || el.closest('.nav-toggle')) {
-      return 'Nav: ' + (el.textContent.trim().substring(0, 40) || 'toggle');
-    }
-    // Fallback
-    const tag = el.tagName.toLowerCase();
-    const text = el.textContent.trim().substring(0, 40);
-    return tag + (text ? ': ' + text : '');
-  }
-
-  // Get page name from URL
-  function getPageName() {
-    const path = window.location.pathname;
-    const file = path.split('/').pop() || 'index.html';
-    return file || 'index.html';
-  }
-
-  const sessionId = getSessionId();
-
-  // Log page view
-  logEvent({
-    type: 'pageview',
-    page: getPageName(),
-    url: window.location.href,
-    timestamp: Date.now(),
-    sessionId: sessionId
-  });
-
-  // Log clicks on interactive elements
-  document.addEventListener('click', function(e) {
-    const el = e.target;
-    // Only track clicks on buttons, links, and watch cards
-    if (el.closest('a, button, .btn, .watch-card, .nav-link, .nav-toggle')) {
-      logEvent({
-        type: 'click',
-        target: getClickLabel(el),
-        page: getPageName(),
-        timestamp: Date.now(),
-        sessionId: sessionId
-      });
-    }
-  }, true);
-})();

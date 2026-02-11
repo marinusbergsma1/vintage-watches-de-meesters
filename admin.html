@@ -476,159 +476,6 @@
       background: rgba(201, 169, 110, 0.08);
     }
 
-    /* ---------- Analytics Section ---------- */
-    .analytics-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      margin-bottom: 32px;
-    }
-
-    .analytics-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--color-border);
-      border-radius: 2px;
-      padding: 24px;
-    }
-
-    .analytics-card h4 {
-      font-size: 0.7rem;
-      margin-bottom: 20px;
-    }
-
-    .analytics-card.full-width {
-      grid-column: 1 / -1;
-    }
-
-    /* Bar chart */
-    .bar-chart {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .bar-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .bar-label {
-      font-size: 0.75rem;
-      color: var(--color-text-muted);
-      width: 140px;
-      flex-shrink: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .bar-track {
-      flex: 1;
-      height: 24px;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 2px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--color-gold-dark), var(--color-gold));
-      border-radius: 2px;
-      transition: width 0.6s var(--ease-out-expo);
-      min-width: 2px;
-    }
-
-    .bar-value {
-      font-size: 0.75rem;
-      color: var(--color-text);
-      width: 40px;
-      text-align: right;
-      flex-shrink: 0;
-    }
-
-    /* Date filter */
-    .date-filter {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-    }
-
-    .date-filter button {
-      padding: 8px 16px;
-      font-family: var(--font-body);
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      border: 1px solid var(--color-border);
-      background: none;
-      color: var(--color-text-muted);
-      cursor: pointer;
-      border-radius: 2px;
-      transition: all 0.3s ease;
-    }
-
-    .date-filter button:hover {
-      border-color: var(--color-border-light);
-      color: var(--color-text);
-    }
-
-    .date-filter button.active {
-      border-color: var(--color-gold);
-      color: var(--color-gold);
-      background: rgba(201, 169, 110, 0.08);
-    }
-
-    /* Clicks list */
-    .clicks-list {
-      list-style: none;
-      padding: 0;
-    }
-
-    .clicks-list li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--color-border);
-      font-size: 0.8rem;
-    }
-
-    .clicks-list li:last-child {
-      border-bottom: none;
-    }
-
-    .clicks-list .click-target {
-      color: var(--color-text);
-      max-width: 250px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .clicks-list .click-count {
-      color: var(--color-gold);
-      font-family: var(--font-heading);
-      font-size: 0.95rem;
-    }
-
-    .analytics-big-number {
-      font-family: var(--font-heading);
-      font-size: 3rem;
-      color: var(--color-gold);
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-
-    .analytics-big-label {
-      font-size: 0.75rem;
-      color: var(--color-text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
     .empty-state {
       text-align: center;
       padding: 60px 20px;
@@ -781,58 +628,20 @@
 
       <!-- ==================== ANALYTICS TAB ==================== -->
       <div id="tab-analytics" class="tab-panel">
-
-        <!-- Date filter -->
-        <div class="date-filter">
-          <button class="active" data-range="today">Vandaag</button>
-          <button data-range="week">Deze week</button>
-          <button data-range="all">Alles</button>
-        </div>
-
-        <!-- Top stats -->
-        <div class="stats-bar" style="grid-template-columns: repeat(3, 1fr);">
-          <div class="stat-card">
-            <div class="stat-value" id="analyticsViews">0</div>
-            <div class="stat-label">Paginaweergaven</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="analyticsClicks">0</div>
-            <div class="stat-label">Klikken</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="analyticsSessions">0</div>
-            <div class="stat-label">Unieke sessies</div>
-          </div>
-        </div>
-
-        <!-- Charts -->
-        <div class="analytics-grid">
-
-          <!-- Page views bar chart -->
-          <div class="analytics-card full-width">
-            <h4>Paginaweergaven per pagina</h4>
-            <div id="pageViewsChart" class="bar-chart"></div>
-          </div>
-
-          <!-- Most clicked -->
-          <div class="analytics-card">
-            <h4>Meest geklikte elementen</h4>
-            <ul id="clicksList" class="clicks-list"></ul>
-          </div>
-
-          <!-- Sessions info -->
-          <div class="analytics-card">
-            <h4>Sessie-informatie</h4>
-            <div style="margin-bottom: 24px;">
-              <div class="analytics-big-number" id="totalSessionsDisplay">0</div>
-              <div class="analytics-big-label">Totaal unieke sessies</div>
-            </div>
-            <div>
-              <div class="analytics-big-number" id="totalEventsDisplay">0</div>
-              <div class="analytics-big-label">Totaal events</div>
-            </div>
-          </div>
-
+        <div style="text-align: center; padding: 80px 20px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 64px; height: 64px; color: var(--color-gold); margin-bottom: 24px;">
+            <path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>
+          </svg>
+          <h2 style="margin-bottom: 12px;">Google Analytics 4</h2>
+          <p style="max-width: 500px; margin: 0 auto 32px; color: var(--color-text-muted);">
+            De analytics voor deze website worden bijgehouden via Google Analytics 4. Bekijk paginaweergaven, sessies, verkeersbronnen en meer in het GA4-dashboard.
+          </p>
+          <a href="https://analytics.google.com/analytics/web/#/p/G-F31KW332BS" target="_blank" rel="noopener" class="btn btn-primary" style="padding: 14px 32px;">
+            Open Google Analytics →
+          </a>
+          <p style="margin-top: 16px; font-size: 0.75rem; color: var(--color-text-muted);">
+            Measurement ID: G-F31KW332BS
+          </p>
         </div>
       </div>
 
@@ -956,10 +765,19 @@
     </div>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+
   <script>
   /* ============================================
-     Admin Panel — JavaScript
+     Admin Panel — JavaScript (Firebase Firestore)
      ============================================ */
+
+  // In-memory watch list (synced with Firestore)
+  let watchList = [];
+  let watchIds = []; // Firestore document IDs
 
   // ---------- Default watch data (seed) ----------
   const defaultWatches = [
@@ -1158,8 +976,6 @@
   ];
 
   const ADMIN_PASSWORD = 'demeesters2025';
-  const STORAGE_KEY = 'dm_watches';
-  const ANALYTICS_KEY = 'dm_analytics';
 
   // ---------- Authentication ----------
   function checkAuth() {
@@ -1184,7 +1000,7 @@
   function showAdmin() {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('adminPanel').style.display = 'block';
-    loadWatches();
+    loadWatchesFromFirestore();
     loadAnalytics();
   }
 
@@ -1206,23 +1022,44 @@
     });
   });
 
-  // ---------- Watch Data Management ----------
-  function getWatches() {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        return JSON.parse(stored);
-      } catch(e) {
-        return [...defaultWatches];
-      }
-    }
-    // Seed with defaults on first load
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultWatches));
-    return [...defaultWatches];
+  // ---------- Watch Data Management (Firestore) ----------
+  function loadWatchesFromFirestore() {
+    db.collection(WATCHES_COLLECTION).orderBy('order', 'asc').get()
+      .then(function(snapshot) {
+        if (snapshot.empty) {
+          // Seed Firestore with default watches
+          seedFirestore();
+          return;
+        }
+        watchList = [];
+        watchIds = [];
+        snapshot.forEach(function(doc) {
+          watchList.push(doc.data());
+          watchIds.push(doc.id);
+        });
+        renderWatchTable();
+      })
+      .catch(function(err) {
+        console.error('Firestore error:', err);
+        watchList = [...defaultWatches];
+        watchIds = [];
+        renderWatchTable();
+      });
   }
 
-  function saveWatchesToStorage(watchList) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(watchList));
+  function seedFirestore() {
+    const batch = db.batch();
+    defaultWatches.forEach(function(watch, index) {
+      const docRef = db.collection(WATCHES_COLLECTION).doc();
+      batch.set(docRef, Object.assign({}, watch, { order: index }));
+    });
+    batch.commit().then(function() {
+      loadWatchesFromFirestore();
+    }).catch(function(err) {
+      console.error('Seed error:', err);
+      watchList = [...defaultWatches];
+      renderWatchTable();
+    });
   }
 
   function parsePrice(priceStr) {
@@ -1243,8 +1080,7 @@
   }
 
   // ---------- Render Watches Table ----------
-  function loadWatches() {
-    const watchList = getWatches();
+  function renderWatchTable() {
     const tbody = document.getElementById('watchTableBody');
 
     // Update stats
@@ -1296,7 +1132,7 @@
     if (typeof index === 'number') {
       title.textContent = 'Horloge bewerken';
       document.getElementById('watchEditIndex').value = index;
-      const w = getWatches()[index];
+      const w = watchList[index];
       if (!w) return;
       document.getElementById('watchName').value = w.name || '';
       document.getElementById('watchYear').value = w.year || '';
@@ -1359,7 +1195,7 @@
     }
   });
 
-  // ---------- Save Watch ----------
+  // ---------- Save Watch (Firestore) ----------
   function saveWatch() {
     const name = document.getElementById('watchName').value.trim();
     if (!name) {
@@ -1380,18 +1216,26 @@
       image: document.getElementById('watchImageUrl').value.trim() || 'https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=800&q=80'
     };
 
-    const watchList = getWatches();
     const editIndex = parseInt(document.getElementById('watchEditIndex').value);
 
-    if (editIndex >= 0 && editIndex < watchList.length) {
-      watchList[editIndex] = watchData;
+    if (editIndex >= 0 && editIndex < watchIds.length && watchIds[editIndex]) {
+      // Update existing document
+      db.collection(WATCHES_COLLECTION).doc(watchIds[editIndex]).update(watchData)
+        .then(function() {
+          closeModal();
+          loadWatchesFromFirestore();
+        })
+        .catch(function(err) { console.error('Update error:', err); });
     } else {
-      watchList.push(watchData);
+      // Add new document
+      watchData.order = watchList.length;
+      db.collection(WATCHES_COLLECTION).add(watchData)
+        .then(function() {
+          closeModal();
+          loadWatchesFromFirestore();
+        })
+        .catch(function(err) { console.error('Add error:', err); });
     }
-
-    saveWatchesToStorage(watchList);
-    closeModal();
-    loadWatches();
   }
 
   // ---------- Edit Watch ----------
@@ -1399,112 +1243,22 @@
     openModal(index);
   }
 
-  // ---------- Delete Watch ----------
+  // ---------- Delete Watch (Firestore) ----------
   function deleteWatch(index) {
     if (!confirm('Weet u zeker dat u dit horloge wilt verwijderen?')) return;
-    const watchList = getWatches();
-    watchList.splice(index, 1);
-    saveWatchesToStorage(watchList);
-    loadWatches();
+    if (watchIds[index]) {
+      db.collection(WATCHES_COLLECTION).doc(watchIds[index]).delete()
+        .then(function() {
+          loadWatchesFromFirestore();
+        })
+        .catch(function(err) { console.error('Delete error:', err); });
+    }
   }
 
   // ---------- Analytics ----------
-  let currentRange = 'today';
-
-  document.querySelectorAll('.date-filter button').forEach(btn => {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('.date-filter button').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-      currentRange = this.dataset.range;
-      loadAnalytics();
-    });
-  });
-
-  function getAnalytics() {
-    try {
-      return JSON.parse(localStorage.getItem(ANALYTICS_KEY) || '[]');
-    } catch(e) {
-      return [];
-    }
-  }
-
-  function filterByRange(events, range) {
-    const now = new Date();
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    const startOfWeek = startOfToday - (now.getDay() === 0 ? 6 : now.getDay() - 1) * 86400000;
-
-    return events.filter(ev => {
-      const ts = ev.timestamp || 0;
-      if (range === 'today') return ts >= startOfToday;
-      if (range === 'week') return ts >= startOfWeek;
-      return true; // 'all'
-    });
-  }
-
   function loadAnalytics() {
-    const allEvents = getAnalytics();
-    const events = filterByRange(allEvents, currentRange);
-
-    // Page views
-    const pageViews = events.filter(e => e.type === 'pageview');
-    const clicks = events.filter(e => e.type === 'click');
-
-    document.getElementById('analyticsViews').textContent = pageViews.length;
-    document.getElementById('analyticsClicks').textContent = clicks.length;
-
-    // Unique sessions
-    const sessions = new Set(events.map(e => e.sessionId).filter(Boolean));
-    document.getElementById('analyticsSessions').textContent = sessions.size;
-    document.getElementById('totalSessionsDisplay').textContent = sessions.size;
-    document.getElementById('totalEventsDisplay').textContent = events.length;
-
-    // Page views per page chart
-    const viewsByPage = {};
-    pageViews.forEach(pv => {
-      const page = pv.page || 'onbekend';
-      viewsByPage[page] = (viewsByPage[page] || 0) + 1;
-    });
-
-    const sortedPages = Object.entries(viewsByPage).sort((a, b) => b[1] - a[1]);
-    const maxViews = sortedPages.length > 0 ? sortedPages[0][1] : 1;
-
-    const chartEl = document.getElementById('pageViewsChart');
-    if (sortedPages.length === 0) {
-      chartEl.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg><p>Nog geen paginaweergaven vastgelegd.</p></div>';
-    } else {
-      chartEl.innerHTML = sortedPages.map(([page, count]) => {
-        const pct = Math.round((count / maxViews) * 100);
-        const displayName = page.replace(/\.html$/, '').replace(/^\//, '') || 'index';
-        return `
-          <div class="bar-row">
-            <div class="bar-label" title="${escapeHtml(page)}">${escapeHtml(displayName)}</div>
-            <div class="bar-track"><div class="bar-fill" style="width: ${pct}%;"></div></div>
-            <div class="bar-value">${count}</div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    // Most clicked elements
-    const clicksByTarget = {};
-    clicks.forEach(c => {
-      const target = c.target || 'onbekend';
-      clicksByTarget[target] = (clicksByTarget[target] || 0) + 1;
-    });
-
-    const sortedClicks = Object.entries(clicksByTarget).sort((a, b) => b[1] - a[1]).slice(0, 15);
-    const clicksEl = document.getElementById('clicksList');
-
-    if (sortedClicks.length === 0) {
-      clicksEl.innerHTML = '<li style="color: var(--color-text-muted); justify-content: center;">Nog geen klikken vastgelegd.</li>';
-    } else {
-      clicksEl.innerHTML = sortedClicks.map(([target, count]) => `
-        <li>
-          <span class="click-target" title="${escapeHtml(target)}">${escapeHtml(target)}</span>
-          <span class="click-count">${count}</span>
-        </li>
-      `).join('');
-    }
+    // Analytics is now handled by Google Analytics 4 (G-F31KW332BS)
+    // The analytics tab shows a link to the GA4 dashboard
   }
 
   // ---------- Init ----------
